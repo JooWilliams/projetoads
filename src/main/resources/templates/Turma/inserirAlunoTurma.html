@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+	<title>Cadastro de Turma</title>
+
+	<style>
+		:root {
+			--primary-color: #4361ee;
+			--secondary-color: #3a0ca3;
+			--accent-color: #4895ef;
+			--light-color: #f8f9fa;
+			--dark-color: #212529;
+			--success-color: #2aca3ac5;
+			--warning-color: #f8961e;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background-color: #f5f7fa;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		.navbar {
+			background: var(--accent-color);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			padding: 1rem 2rem;
+		}
+
+		.nav-link {
+			font-weight: 500;
+			padding: 0.5rem 1rem;
+			margin: 0 0.25rem;
+			border-radius: 0.5rem;
+			transition: all 0.3s ease;
+		}
+
+		.nav-link:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			transform: translateY(-2px);
+		}
+
+		.dropdown-menu {
+			border: none;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+			border-radius: 0.5rem;
+			padding: 0.5rem;
+		}
+
+		.dropdown-item {
+			padding: 0.5rem 1rem;
+			border-radius: 0.25rem;
+			transition: all 0.2s ease;
+			font-weight: 500;
+		}
+
+		.dropdown-item:hover {
+			background-color: var(--accent-color);
+			color: white;
+			transform: translateX(5px);
+		}
+
+		main {
+			flex: 1;
+			padding: 2rem 0;
+		}
+
+		h2 {
+			color: var(--dark-color);
+			font-weight: 600;
+			margin-bottom: 1.5rem;
+			position: relative;
+			padding-bottom: 0.5rem;
+		}
+
+		.form-control {
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			padding: 12px 15px;
+			transition: all 0.3s;
+		}
+
+		.form-control:focus {
+			border-color: var(--accent-color);
+			box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+		}
+
+		label {
+			color: var(--dark-color);
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+
+		.btn-submit {
+			background-color: var(--accent-color);
+			border: none;
+			border-radius: 8px;
+			padding: 10px 25px;
+			font-weight: 500;
+			transition: all 0.3s;
+			color: white;
+			width: 150px;
+		}
+
+		.btn-submit:hover {
+			background-color: var(--success-color);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.form-group {
+			margin-bottom: 1.5rem;
+		}
+
+		select.form-control {
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+			background-repeat: no-repeat;
+			background-position: right 0.75rem center;
+			background-size: 16px 12px;
+		}
+
+		footer {
+			color: black;
+			padding: 1.5rem;
+			margin-top: auto;
+		}
+
+		.footer-text {
+			font-weight: 600;
+			margin: 0;
+		}
+
+		/* Estilos para checkbox dos alunos */
+		.aluno-checkbox {
+			margin-bottom: 10px;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			background-color: #f9f9f9;
+		}
+
+		.aluno-checkbox:hover {
+			background-color: #e9ecef;
+		}
+
+		.aluno-checkbox input[type="checkbox"] {
+			margin-right: 10px;
+		}
+	</style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">
+					<i class="fas fa-graduation-cap me-2"></i>Gestão Escolar
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/dashboard}"><i class="fas fa-home me-1"></i>Home</a>
+						</li>
+
+						<!-- Dropdown aluno -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" id="navbardrop" data-bs-toggle="dropdown">
+								<i class="fas fa-user-graduate me-1"></i>Aluno
+							</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/aluno/inserir}">
+									<i class="fas fa-plus-circle me-2"></i>Inserir
+								</a>
+								<a class="dropdown-item" th:href="@{/aluno/listar}">
+									<i class="fas fa-search me-2"></i>Listar
+								</a>
+								<a class="dropdown-item" th:href="@{/aluno/editar}">
+									<i class="fas fa-edit me-2"></i>Editar
+								</a>
+								<a class="dropdown-item" th:href="@{/aluno/deletar}">
+									<i class="fas fa-trash-alt me-2"></i>Excluir
+								</a>
+							</div>
+						</li>
+
+						<!-- Dropdown Professor -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" id="navbardrop" data-bs-toggle="dropdown">
+								<i class="fas fa-chalkboard-teacher me-1"></i>Professor
+							</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/professor/inserir}">
+									<i class="fas fa-plus-circle me-2"></i>Inserir
+								</a>
+								<a class="dropdown-item" th:href="@{/professor/listar}">
+									<i class="fas fa-search me-2"></i>Listar
+								</a>
+								<a class="dropdown-item" th:href="@{/professor/alterar}">
+									<i class="fas fa-edit me-2"></i>Editar
+								</a>
+								<a class="dropdown-item" th:href="@{/professor/excluir}">
+									<i class="fas fa-trash-alt me-2"></i>Excluir
+								</a>
+							</div>
+						</li>
+
+						<!-- Dropdown Turma -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle active" id="navbardrop" data-bs-toggle="dropdown">
+								<i class="fas fa-users me-1"></i>Turma
+							</a>
+							<div class="dropdown-menu">
+								<a class="dropdown-item" th:href="@{/turma/inserir}">
+									<i class="fas fa-plus-circle me-2"></i>Inserir
+								</a>
+								<a class="dropdown-item" th:href="@{/turma/listar}">
+									<i class="fas fa-search me-2"></i>Listar
+								</a>
+								<a class="dropdown-item" th:href="@{/turma/inserirAlunosTurma}">
+									<i class="fas fa-search me-2"></i>Compor Turma
+								</a>
+								<a class="dropdown-item" th:href="@{/turma/editar}">
+									<i class="fas fa-edit me-2"></i>Editar
+								</a>
+								<a class="dropdown-item" th:href="@{/turma/deletar}">
+									<i class="fas fa-trash-alt me-2"></i>Excluir
+								</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main class="flex-fill">
+		<div class="container py-4">
+			<div class="form-container">
+				<h2>Inserir Alunos em Turma</h2>
+
+				<form id="inserirTurma" class="form" th:object="${turma}" action="/turma/inserirAlunosTurma"
+					method="post">
+					<input type="hidden" id="alunos-confirmados" name="alunosConfirmados" value="false">
+
+					<div class="alert alert-danger" role="alert" th:if="${msg}">
+						<strong><i class="fas fa-exclamation-circle me-2"></i><span th:text="${msg}"></span></strong>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="turma-select" class="form-label">Selecione a Turma</label>
+								<select name="turma-select" id="turma-select" onchange="atualizarAlunos()"
+									class="form-control" th:field="*{id}" required>
+									<option value="0">Escolha uma turma</option>
+									<option th:each="turma2:${turmas}" th:value="${turma2.id}"
+										th:text="${turma2.codTurma}"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group text-center mt-4">
+						<button type="submit" class="btn btn-submit" onclick="return validarSubmissao()">
+							Salvar
+						</button>
+					</div>
+				</form>
+
+				<div class="modal fade" id="alunosModal" tabindex="-1" aria-labelledby="alunosModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="alunosModalLabel">Selecione os Alunos</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div id="alunos-modal-content">
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+								<button type="button" class="btn btn-primary"
+									onclick="confirmarAlunos()">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="text-center">
+		<div class="container">
+			<p class="footer-text mb-0">© 2025 SENAC - Todos os direitos reservados</p>
+		</div>
+	</footer>
+
+	<script>
+		let alunosModal;
+
+		document.addEventListener('DOMContentLoaded', function () {
+			alunosModal = new bootstrap.Modal(document.getElementById('alunosModal'));
+		});
+
+		function atualizarAlunos() {
+			const turmaSelect = document.getElementById('turma-select');
+
+			if (!turmaSelect) {
+				console.error('Elemento turma-select não encontrado');
+				return;
+			}
+
+			const turmaId = turmaSelect.value;
+
+			if (!turmaId || turmaId === '0') {
+				alert("Selecione uma turma válida!");
+				return;
+			}
+
+			const alunosContent = document.getElementById('alunos-modal-content');
+			alunosContent.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Carregando alunos...</div>';
+
+			fetch(`/turma/buscarAlunos/${turmaId}`)
+				.then(response => {
+					console.log('Status da resposta:', response.status);
+					console.log('Resposta do servidor:', response);
+
+					if (!response.ok) {
+						throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+					}
+
+					return response.json();
+				})
+				.then(data => {
+					console.log('Dados recebidos:', data);
+
+					alunosContent.innerHTML = '';
+
+					if (Array.isArray(data) && data.length > 0) {
+						data.forEach(aluno => {
+							const alunoDiv = document.createElement('div');
+							alunoDiv.className = 'aluno-checkbox';
+							alunoDiv.innerHTML = `
+								<input type="checkbox" id="aluno-${aluno.id}" value="${aluno.id}">
+								<label for="aluno-${aluno.id}">${aluno.nome}</label>
+							`;
+							alunosContent.appendChild(alunoDiv);
+						});
+					} else {
+						alunosContent.innerHTML = '<div class="alert alert-info">Nenhum aluno encontrado para esta turma.</div>';
+					}
+
+					// Exibe o modal
+					alunosModal.show();
+				})
+				.catch(error => {
+					console.error('Erro completo:', error);
+					alert(`Erro ao buscar alunos: ${error.message}`);
+					alunosContent.innerHTML = '<div class="alert alert-danger">Erro ao carregar alunos. Tente novamente.</div>';
+				});
+		}
+
+		function confirmarAlunos() {
+			const checkboxes = document.querySelectorAll('#alunos-modal-content input[type="checkbox"]:checked');
+			const form = document.getElementById('inserirTurma');
+
+			const hiddenInputs = form.querySelectorAll('input[name="alunosSelecionados"]');
+			hiddenInputs.forEach(input => input.remove());
+
+			checkboxes.forEach(checkbox => {
+				const input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = 'alunosSelecionados';
+				input.value = checkbox.value;
+				form.appendChild(input);
+			});
+
+			document.getElementById('alunos-confirmados').value = 'true';
+
+			if (checkboxes.length > 0) {
+				alert(`${checkboxes.length} aluno(s) selecionado(s) para a turma.`);
+			} else {
+				alert('Nenhum aluno foi selecionado.');
+			}
+
+
+			alunosModal.hide();
+		}
+
+		function validarSubmissao() {
+			const alunosConfirmados = document.getElementById('alunos-confirmados').value;
+			const turmaSelect = document.getElementById('turma-select');
+
+			if (!turmaSelect.value || turmaSelect.value === '0') {
+				alert('Por favor, selecione uma turma.');
+				return false;
+			}
+
+			if (alunosConfirmados !== 'true') {
+				alert('Por favor, selecione os alunos antes de salvar.');
+				return false;
+			}
+
+			const alunosSelecionados = document.querySelectorAll('input[name="alunosSelecionados"]');
+			if (alunosSelecionados.length === 0) {
+				alert('Por favor, selecione pelo menos um aluno.');
+				return false;
+			}
+
+			return true;
+		}
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
